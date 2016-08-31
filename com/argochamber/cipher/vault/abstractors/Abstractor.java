@@ -35,7 +35,8 @@ public class Abstractor extends File {
     private Encoder decipher;
     
     /**
-     * This is a reference to the parent's factory (The one that has created it).
+     * This is a reference to the parent's factory
+     * (The one that has created it).
      * <p>
      *  If null that means that this abstractor was not factory-assembled.
      * </p>
@@ -63,7 +64,10 @@ public class Abstractor extends File {
      * @throws java.io.IOException 
      * @throws java.io.FileNotFoundException 
      */
-    public byte[] getEncode(boolean enc) throws IOException, FileNotFoundException{
+    public byte[] getEncode(boolean enc) throws 
+            IOException,
+            FileNotFoundException
+    {
         if (enc){
             return cipher.encode(Files.readAllBytes(this.toPath()), encoder);
         } else {
@@ -87,7 +91,7 @@ public class Abstractor extends File {
                 .map((file) -> factory.buildNew(file.getPath()))
                 .collect(Collectors.toList())
                 .toArray(absList);
-        return absList; //To change body of generated methods, choose Tools | Templates.
+        return absList;
     }
 
     /**

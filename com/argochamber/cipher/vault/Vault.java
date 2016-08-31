@@ -30,6 +30,11 @@ public class Vault {
             ACTION_ENCODE = "e";
     
     /**
+     * The size of data, for processing.
+     */
+    public static final int DATA_SET_SIZE = 3;
+    
+    /**
      * @param args the command line arguments
      * @throws java.io.IOException
      */
@@ -89,9 +94,13 @@ public class Vault {
     private static Encoder getDecoder(){
         return (raw, encoder) -> {
                     for (int i = 0; i < raw.length; i++) {
-                        int b = (int) raw[i] - (int) encoder[i % encoder.length];
-                        raw[i] = (byte) (b < Byte.MIN_VALUE
-                                ? (Byte.MAX_VALUE) + (b - (Byte.MIN_VALUE - 1)) : b);
+                        int b = 
+                                (int) raw[i] - 
+                                (int) encoder[i % encoder.length];
+                        raw[i] = 
+                                (byte) (b < Byte.MIN_VALUE ?
+                                (Byte.MAX_VALUE) + (b - (Byte.MIN_VALUE - 1)) :
+                                b);
                     }
                     return raw;
                 };
@@ -104,9 +113,13 @@ public class Vault {
     private static Encoder getEncoder(){
         return (raw, encoder) -> {
                     for (int i = 0; i < raw.length; i++) {
-                        int b = (int) raw[i] + (int) encoder[i % encoder.length];
-                        raw[i] = (byte) (b > Byte.MAX_VALUE
-                                ? (Byte.MIN_VALUE) + (b - (Byte.MAX_VALUE + 1)) : b);
+                        int b = 
+                                (int) raw[i] + 
+                                (int) encoder[i % encoder.length];
+                        raw[i] = 
+                                (byte) (b > Byte.MAX_VALUE  ?
+                                (Byte.MIN_VALUE) + (b - (Byte.MAX_VALUE + 1)) :
+                                b);
                     }
                     return raw;
                 };
@@ -127,11 +140,20 @@ public class Vault {
                 try (FileOutputStream fout = new FileOutputStream(root)) {
                     fout.write(input);
                 }
-                byte[] beacon = root.getCipher().encode(root.getName().getBytes(), root.getEncoder());
+                byte[] beacon = root.getCipher()
+                        .encode(root.getName().getBytes(), root.getEncoder());
                 String newName = getHex(beacon);
-                root.renameTo(new java.io.File(root.getParentFile().getAbsolutePath()+"/"+newName));
+                root.renameTo(
+                        new java.io.File(
+                                root
+                                        .getParentFile()
+                                        .getAbsolutePath()+"/"+newName
+                        )
+                );
             } catch (IOException ex) {
-                Logger.getLogger(Vault.class.getName()).log(Level.SEVERE, null, ex);
+                Logger
+                        .getLogger(Vault.class.getName())
+                        .log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -151,11 +173,23 @@ public class Vault {
                 try (FileOutputStream fout = new FileOutputStream(root)) {
                     fout.write(input);
                 }
-                byte[] beacon = root.getDecipher().encode(getPure(root.getName().toCharArray()), root.getEncoder());
+                byte[] beacon = root.getDecipher()
+                        .encode(
+                                getPure(root.getName().toCharArray()),
+                                root.getEncoder()
+                        );
                 String newName = new String(beacon);
-                root.renameTo(new java.io.File(root.getParentFile().getAbsolutePath()+"/"+newName));
+                root.renameTo(
+                        new java.io.File(
+                                root
+                                        .getParentFile()
+                                        .getAbsolutePath()+"/"+newName
+                        )
+                );
             } catch (IOException ex) {
-                Logger.getLogger(Vault.class.getName()).log(Level.SEVERE, null, ex);
+                Logger
+                        .getLogger(Vault.class.getName())
+                        .log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -179,10 +213,11 @@ public class Vault {
      * @return 
      */
     public static byte[] getPure(char[] data){
-        byte[] bRaw = new byte[data.length/3];
-        for (int i = 0; i < data.length; i += 3){
+        byte[] bRaw = new byte[data.length/DATA_SET_SIZE];
+        for (int i = 0; i < data.length; i += DATA_SET_SIZE){
             String hex = new String(new char[]{data[i], data[i+1], data[i+2]});
-            bRaw[i/3] = (byte)(Integer.parseInt(hex)+(Byte.MIN_VALUE));
+            bRaw[i/DATA_SET_SIZE] = 
+                    (byte)(Integer.parseInt(hex)+(Byte.MIN_VALUE));
         }
         return bRaw;
     }
