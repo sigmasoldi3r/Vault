@@ -7,13 +7,13 @@ package com.argochamber.cipher.vault;
 
 import com.argochamber.cipher.vault.abstractors.Abstractor;
 import com.argochamber.cipher.vault.abstractors.AbstractorFactory;
+import com.argochamber.cipher.vault.raster.Encoder;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -28,7 +28,7 @@ public class Vault {
             VAULT_KEY = "key",
             ACTION_DECODE = "d",
             ACTION_ENCODE = "e";
-
+    
     /**
      * @param args the command line arguments
      * @throws java.io.IOException
@@ -42,25 +42,8 @@ public class Vault {
 
         //We need a factory
         AbstractorFactory factory = new AbstractorFactory(
-                //ENCODE
-                (raw, encoder) -> {
-                    for (int i = 0; i < raw.length; i++) {
-                        int b = (int) raw[i] + (int) encoder[i % encoder.length];
-                        raw[i] = (byte) (b > Byte.MAX_VALUE
-                                ? (Byte.MIN_VALUE) + (b - (Byte.MAX_VALUE + 1)) : b);
-                    }
-                    return raw;
-                },
-                //DECODE
-                (raw, encoder) -> {
-                    for (int i = 0; i < raw.length; i++) {
-                        int b = (int) raw[i] - (int) encoder[i % encoder.length];
-                        raw[i] = (byte) (b < Byte.MIN_VALUE
-                                ? (Byte.MAX_VALUE) + (b - (Byte.MIN_VALUE - 1)) : b);
-                    }
-                    return raw;
-                },
-                //SECRET KEY
+                getEncoder(),
+                getDecoder(),
                 key.getBytes());
 
         //Here comes the greasy stuff
@@ -68,9 +51,13 @@ public class Vault {
         Abstractor root = factory.buildNew(VAULT_FOLDER);
         if (!root.exists()) {
             System.err.println("Could not find the vault folder.");
-            System.exit(-1);
+        } else {
+            beginCipher(input, root);
         }
 
+    }
+    
+    private static void beginCipher(Scanner input, Abstractor root){
         //Remember, the more you encode, the more you will have to decode.
         System.out.println("Enter the action (d/e):");
         boolean shouldEncode;
@@ -93,7 +80,36 @@ public class Vault {
         } else {
             deepDecode(root);
         }
-
+    }
+    
+    /**
+     * Generates the default decoder.
+     * @return 
+     */
+    private static Encoder getDecoder(){
+        return (raw, encoder) -> {
+                    for (int i = 0; i < raw.length; i++) {
+                        int b = (int) raw[i] - (int) encoder[i % encoder.length];
+                        raw[i] = (byte) (b < Byte.MIN_VALUE
+                                ? (Byte.MAX_VALUE) + (b - (Byte.MIN_VALUE - 1)) : b);
+                    }
+                    return raw;
+                };
+    }
+    
+    /**
+     * Generates the default encode.
+     * @return 
+     */
+    private static Encoder getEncoder(){
+        return (raw, encoder) -> {
+                    for (int i = 0; i < raw.length; i++) {
+                        int b = (int) raw[i] + (int) encoder[i % encoder.length];
+                        raw[i] = (byte) (b > Byte.MAX_VALUE
+                                ? (Byte.MIN_VALUE) + (b - (Byte.MAX_VALUE + 1)) : b);
+                    }
+                    return raw;
+                };
     }
 
     /**
@@ -101,7 +117,7 @@ public class Vault {
      *
      * @param root
      */
-    static void deepEncode(Abstractor root) {
+    private static void deepEncode(Abstractor root) {
         if (root.isDirectory()) {
             Arrays.asList(root.listFiles()).stream()
                     .forEach(Vault::deepEncode);
@@ -125,7 +141,7 @@ public class Vault {
      *
      * @param root
      */
-    static void deepDecode(Abstractor root) {
+    private static void deepDecode(Abstractor root) {
         if (root.isDirectory()) {
             Arrays.asList(root.listFiles()).stream()
                     .forEach(Vault::deepDecode);

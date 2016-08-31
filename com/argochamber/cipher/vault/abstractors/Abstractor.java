@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * 
  * @author Pablo
  */
-public class Abstractor extends java.io.File {
+public class Abstractor extends File {
     
     /**
      * This will tell the cipher how to encrypt/decrypt.
