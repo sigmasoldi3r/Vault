@@ -7,7 +7,6 @@ package com.argochamber.cipher.vault;
 
 import com.argochamber.cipher.vault.abstractors.Abstractor;
 import com.argochamber.cipher.vault.abstractors.AbstractorFactory;
-import com.argochamber.cipher.vault.raster.Encoder;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
