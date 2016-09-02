@@ -8,7 +8,9 @@ package com.argochamber.cipher.vault.abstractors;
 import com.argochamber.cipher.vault.raster.Encoder;
 
 /**
- *
+ * This factory creates Abstractors using the given ciphers.
+ * <hr>
+ * <strong>BEWARE!</strong> The cipher must match the decipher (in algorithm).
  * @author Pablo
  */
 public class AbstractorFactory {
@@ -29,14 +31,31 @@ public class AbstractorFactory {
     private final byte[] encoder;
 
     /**
-     * 
+     * Creates a new factory using the given ciphers.
      * @param cipher
      * @param decipher 
+     * @param encoder 
      */
     public AbstractorFactory(Encoder cipher, Encoder decipher, byte[] encoder) {
         this.cipher = cipher;
         this.decipher = decipher;
         this.encoder = encoder;
+    }
+    
+    /**
+     * Gets the algorithm class of ciphering.
+     * @return 
+     */
+    public Encoder getCipher(){
+        return this.cipher;
+    }
+    
+    /**
+     * Gets the algorithm class of ciphering.
+     * @return 
+     */
+    public Encoder getDecipher(){
+        return this.decipher;
     }
     
     /**

@@ -46,10 +46,7 @@ public class Vault {
         String key = input.nextLine();
 
         //We need a factory
-        AbstractorFactory factory = new AbstractorFactory(
-                getEncoder(),
-                getDecoder(),
-                key.getBytes());
+        AbstractorFactory factory = new DefaultFactory(key.getBytes());
 
         //Here comes the greasy stuff
         //The abstractor is the root folder.
@@ -87,44 +84,6 @@ public class Vault {
         }
     }
     
-    /**
-     * Generates the default decoder.
-     * @return 
-     */
-    private static Encoder getDecoder(){
-        return (raw, encoder) -> {
-                    for (int i = 0; i < raw.length; i++) {
-                        int b = 
-                                (int) raw[i] - 
-                                (int) encoder[i % encoder.length];
-                        raw[i] = 
-                                (byte) (b < Byte.MIN_VALUE ?
-                                (Byte.MAX_VALUE) + (b - (Byte.MIN_VALUE - 1)) :
-                                b);
-                    }
-                    return raw;
-                };
-    }
-    
-    /**
-     * Generates the default encode.
-     * @return 
-     */
-    private static Encoder getEncoder(){
-        return (raw, encoder) -> {
-                    for (int i = 0; i < raw.length; i++) {
-                        int b = 
-                                (int) raw[i] + 
-                                (int) encoder[i % encoder.length];
-                        raw[i] = 
-                                (byte) (b > Byte.MAX_VALUE  ?
-                                (Byte.MIN_VALUE) + (b - (Byte.MAX_VALUE + 1)) :
-                                b);
-                    }
-                    return raw;
-                };
-    }
-
     /**
      * Recursive deep scan. Encodes! haha lol :U
      *
