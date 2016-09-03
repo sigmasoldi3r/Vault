@@ -5,6 +5,7 @@
  */
 package com.argochamber.cipher.vault;
 
+import com.argochamber.cipher.vault.raster.Cipher;
 import com.argochamber.cipher.vault.abstractors.Abstractor;
 import com.argochamber.cipher.vault.abstractors.AbstractorFactory;
 import java.io.FileOutputStream;
@@ -19,6 +20,38 @@ import java.util.logging.Logger;
  * @author Pablo
  */
 public class Vault {
+    
+    /**
+     * The default method of ciphering that uses the Vault System.
+     */
+    public static final Cipher DEFAULT_CIPHER = new Cipher(
+            (raw, encoder) -> {
+                    for (int i = 0; i < raw.length; i++) {
+                        int b = 
+                                (int) raw[i] + 
+                                (int) encoder[i % encoder.length];
+                        raw[i] = 
+                                (byte) (b > Byte.MAX_VALUE  ?
+                                (Byte.MIN_VALUE) + (b - (Byte.MAX_VALUE + 1)) :
+                                b);
+                    }
+                    return raw;
+                },
+                (raw, encoder) -> {
+                    for (int i = 0; i < raw.length; i++) {
+                        int b = 
+                                (int) raw[i] - 
+                                (int) encoder[i % encoder.length];
+                        raw[i] = 
+                                (byte) (b < Byte.MIN_VALUE ?
+                                (Byte.MAX_VALUE) + (b - (Byte.MIN_VALUE - 1)) :
+                                b);
+                    }
+                    return raw;
+                }
+    );
+    
+    
 
     /**
      * This is the default working vault dir.

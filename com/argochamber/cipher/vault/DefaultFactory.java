@@ -8,7 +8,7 @@ package com.argochamber.cipher.vault;
 import com.argochamber.cipher.vault.abstractors.AbstractorFactory;
 
 /**
- * This Factory uses the default algorithm.
+ * This Factory uses the default algorithm used by The Vault System.
  * @author Pablo
  */
 public class DefaultFactory extends AbstractorFactory{
@@ -18,33 +18,7 @@ public class DefaultFactory extends AbstractorFactory{
      * @param key 
      */
     public DefaultFactory(byte[] key){
-        super(
-                (raw, encoder) -> {
-                    for (int i = 0; i < raw.length; i++) {
-                        int b = 
-                                (int) raw[i] + 
-                                (int) encoder[i % encoder.length];
-                        raw[i] = 
-                                (byte) (b > Byte.MAX_VALUE  ?
-                                (Byte.MIN_VALUE) + (b - (Byte.MAX_VALUE + 1)) :
-                                b);
-                    }
-                    return raw;
-                },
-                (raw, encoder) -> {
-                    for (int i = 0; i < raw.length; i++) {
-                        int b = 
-                                (int) raw[i] - 
-                                (int) encoder[i % encoder.length];
-                        raw[i] = 
-                                (byte) (b < Byte.MIN_VALUE ?
-                                (Byte.MAX_VALUE) + (b - (Byte.MIN_VALUE - 1)) :
-                                b);
-                    }
-                    return raw;
-                },
-                key
-        );
+        super( Vault.DEFAULT_CIPHER, key );
     }
     
 }

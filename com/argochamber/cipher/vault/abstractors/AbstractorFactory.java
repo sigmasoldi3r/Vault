@@ -5,6 +5,7 @@
  */
 package com.argochamber.cipher.vault.abstractors;
 
+import com.argochamber.cipher.vault.raster.Cipher;
 import com.argochamber.cipher.vault.raster.Encoder;
 
 /**
@@ -16,14 +17,9 @@ import com.argochamber.cipher.vault.raster.Encoder;
 public class AbstractorFactory {
     
     /**
-     * The cipher used to encode resources.
+     * This now takes care of all.
      */
-    private final Encoder cipher;
-    
-    /**
-     * This should implement the inverse operation.
-     */
-    private final Encoder decipher;
+    private final Cipher cipher;
     
     /**
      * This is the ciphering key.
@@ -32,30 +28,46 @@ public class AbstractorFactory {
 
     /**
      * Creates a new factory using the given ciphers.
+     * @deprecated Use the Cipher.
+     * @param encoder
+     * @param decoder 
+     * @param key
+     */
+    public AbstractorFactory(Encoder encoder, Encoder decoder, byte[] key) {
+        this.cipher = new Cipher(encoder, decoder);
+        this.encoder = key;
+    }
+
+    /**
+     * Creates a new factory.
      * @param cipher
-     * @param decipher 
      * @param encoder 
      */
-    public AbstractorFactory(Encoder cipher, Encoder decipher, byte[] encoder) {
-        this.cipher = cipher;
-        this.decipher = decipher;
+    public AbstractorFactory(Cipher cipher, byte[] encoder) {
         this.encoder = encoder;
+        this.cipher = cipher;
     }
+    
+    
     
     /**
      * Gets the algorithm class of ciphering.
+     * @deprecated  not needed
+     * @see com.argochamber.cipher.vault.raster.Cipher
      * @return 
      */
     public Encoder getCipher(){
-        return this.cipher;
+        return this.cipher.getEncoder();
     }
     
     /**
      * Gets the algorithm class of ciphering.
+     * @deprecated 
+     * @see com.argochamber.cipher.vault.raster.Cipher
      * @return 
      */
     public Encoder getDecipher(){
-        return this.decipher;
+        return this.cipher.getDecoder();
     }
     
     /**
@@ -65,8 +77,8 @@ public class AbstractorFactory {
      */
     public Abstractor buildNew(String path){
         Abstractor p = new Abstractor(path, encoder);
-        p.setCipher(cipher);
-        p.setDecipher(decipher);
+        p.setCipher(cipher.getEncoder());
+        p.setDecipher(cipher.getDecoder());
         p.setFactory(this);
         return p;
     }
