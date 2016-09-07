@@ -5,7 +5,7 @@
  */
 package com.argochamber.cipher.vault.abstractors;
 
-import com.argochamber.cipher.vault.raster.Encoder;
+import com.argochamber.cipher.vault.raster.Cipher;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,12 +27,7 @@ public class Abstractor extends File {
     /**
      * The cipher used to encode resources.
      */
-    private Encoder cipher;
-    
-    /**
-     * This should implement the inverse operation.
-     */
-    private Encoder decipher;
+    private final Cipher cipher;
     
     /**
      * This is a reference to the parent's factory
@@ -47,14 +42,16 @@ public class Abstractor extends File {
     /**
      * This, should not be used to instantiate an object, instead you should
      * use a factory.
+     * @param cipher
      * @see com.argochamber.cipher.vault.abstractors.AbstractorFactory
      * @param path
      * @param encoder 
      */
-    public Abstractor(String path, byte[] encoder) {
+    public Abstractor(String path, Cipher cipher, byte[] encoder) {
         super(path);
         this.factory = null;
         this.encoder = encoder;
+        this.cipher = cipher;
     }
     
     /**
@@ -71,17 +68,10 @@ public class Abstractor extends File {
         if (enc){
             return cipher.encode(Files.readAllBytes(this.toPath()), encoder);
         } else {
-            return decipher.encode(Files.readAllBytes(this.toPath()), encoder);
+            return cipher.decode(Files.readAllBytes(this.toPath()), encoder);
         }
     }
     
-    public void setCipher(Encoder cipher) {
-        this.cipher = cipher;
-    }
-
-    public void setDecipher(Encoder decipher) {
-        this.decipher = decipher;
-    }
     
     @Override
     public Abstractor[] listFiles() {
@@ -113,14 +103,9 @@ public class Abstractor extends File {
         return encoder;
     }
 
-    public Encoder getCipher() {
+    public Cipher getCipher() {
         return cipher;
-    }
-
-    public Encoder getDecipher() {
-        return decipher;
-    }
-    
+    }   
     
     
 }

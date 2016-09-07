@@ -6,7 +6,6 @@
 package com.argochamber.cipher.vault.abstractors;
 
 import com.argochamber.cipher.vault.raster.Cipher;
-import com.argochamber.cipher.vault.raster.Encoder;
 
 /**
  * This factory creates Abstractors using the given ciphers.
@@ -27,18 +26,6 @@ public class AbstractorFactory {
     private final byte[] encoder;
 
     /**
-     * Creates a new factory using the given ciphers.
-     * @deprecated Use the Cipher.
-     * @param encoder
-     * @param decoder 
-     * @param key
-     */
-    public AbstractorFactory(Encoder encoder, Encoder decoder, byte[] key) {
-        this.cipher = new Cipher(encoder, decoder);
-        this.encoder = key;
-    }
-
-    /**
      * Creates a new factory.
      * @param cipher
      * @param encoder 
@@ -48,26 +35,12 @@ public class AbstractorFactory {
         this.cipher = cipher;
     }
     
-    
-    
     /**
-     * Gets the algorithm class of ciphering.
-     * @deprecated  not needed
-     * @see com.argochamber.cipher.vault.raster.Cipher
+     * Geter for the current cipher.
      * @return 
      */
-    public Encoder getCipher(){
-        return this.cipher.getEncoder();
-    }
-    
-    /**
-     * Gets the algorithm class of ciphering.
-     * @deprecated 
-     * @see com.argochamber.cipher.vault.raster.Cipher
-     * @return 
-     */
-    public Encoder getDecipher(){
-        return this.cipher.getDecoder();
+    public Cipher getCipher(){
+        return this.cipher;
     }
     
     /**
@@ -76,9 +49,7 @@ public class AbstractorFactory {
      * @return 
      */
     public Abstractor buildNew(String path){
-        Abstractor p = new Abstractor(path, encoder);
-        p.setCipher(cipher.getEncoder());
-        p.setDecipher(cipher.getDecoder());
+        Abstractor p = new Abstractor(path,cipher, encoder);
         p.setFactory(this);
         return p;
     }

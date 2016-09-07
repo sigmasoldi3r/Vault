@@ -25,7 +25,7 @@ public class Vault {
      * The default method of ciphering that uses the Vault System.
      */
     public static final Cipher DEFAULT_CIPHER = new Cipher(
-            (raw, encoder) -> {
+                (raw, encoder) -> {
                     for (int i = 0; i < raw.length; i++) {
                         int b = 
                                 (int) raw[i] + 
@@ -164,8 +164,8 @@ public class Vault {
                 try (FileOutputStream fout = new FileOutputStream(root)) {
                     fout.write(input);
                 }
-                byte[] beacon = root.getDecipher()
-                        .encode(
+                byte[] beacon = root.getCipher()
+                        .decode(
                                 getPure(root.getName().toCharArray()),
                                 root.getEncoder()
                         );

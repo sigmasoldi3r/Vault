@@ -42,19 +42,4 @@ public class Cipher {
         return this.decoder.encode(data, meta);
     }
     
-    /**
-     * Getter maintains forward compatibility.
-     * @return 
-     */
-    public Encoder getEncoder(){
-        return this.encoder;
-    }
-    
-    /**
-     * @see Cipher#getEncoder() 
-     * @return 
-     */
-    public Encoder getDecoder(){
-        return this.decoder;
-    }
 }
