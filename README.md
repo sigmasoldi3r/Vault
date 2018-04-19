@@ -3,7 +3,12 @@
 # Vault
 File encryption system.
 
-*Vault* is an easy encryption system for your files, however does __not support folder name encrypton__ yet.
+*Vault* is an easy encryption system for your files, however does __not support folder name encrypton__.
+
+## Disclaimer
+
+This is a student project, made during a week in the collegue. Do not expect it to work nicely, only intended for research
+purposes and basic programming learning.
 
 ### Science behind
 
